@@ -7,9 +7,8 @@ fn main() {
     let mut input = String::new();
     file.read_to_string(&mut input).unwrap();
 
-    // println!("{}", part_one(&input));
-    part_two(&input);
-    // println!("{}", part_two(&input));
+    println!("{}", part_one(&input));
+    println!("{}", part_two(&input));
 }
 
 fn part_one(input: &String) -> u32 {
@@ -45,26 +44,36 @@ fn part_one(input: &String) -> u32 {
 fn part_two(input: &String) -> u32 {
     input
         .lines()
-        .take(1)
-        .enumerate()
-        .map(|(i, line)| {
-            let mut rgb: [u32; 3] = [0, 0, 0];
-            let x = line
-                .split_once(":")
+        .map(|line| {
+            let mut rgb: [u32; 3] = [1, 1, 1];
+            line.split_once(":")
                 .unwrap()
                 .1
                 .split([';', ','])
-                .map(|s| {
+                .for_each(|s| {
                     let t = s.trim().split_once(' ').unwrap();
-                    rgb[0] += 1;
-                    (t.0.parse::<u32>().unwrap(), t.1.chars().nth(0).unwrap());
-                    0
-                })
-                .collect::<Vec<u32>>();
-            println!("{}", rgb[0]);
+                    let (v, c) = (t.0.parse::<u32>().unwrap(), t.1.chars().nth(0).unwrap());
 
-            x.into_iter().sum::<u32>()
+                    match (v, c) {
+                        (v, 'r') => {
+                            if v > rgb[0] {
+                                rgb[0] = v
+                            }
+                        }
+                        (v, 'g') => {
+                            if v > rgb[1] {
+                                rgb[1] = v
+                            }
+                        }
+                        (v, 'b') => {
+                            if v > rgb[2] {
+                                rgb[2] = v
+                            }
+                        }
+                        _ => (),
+                    };
+                });
+            rgb.iter().product::<u32>()
         })
-        .sum::<u32>();
-    0
+        .sum::<u32>()
 }
